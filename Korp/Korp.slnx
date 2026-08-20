@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/Estoque/">
+    <Project Path="Estoque.API/Estoque.API.csproj" Id="9c004919-66a2-4d41-a279-58f37240c17d" />
+  </Folder>
+  <Folder Name="/Faturamento/">
+    <Project Path="Faturamento.API/Faturamento.API.csproj" Id="5e44ec72-0d17-4c49-82ab-b503f529be6c" />
+  </Folder>
+</Solution>
