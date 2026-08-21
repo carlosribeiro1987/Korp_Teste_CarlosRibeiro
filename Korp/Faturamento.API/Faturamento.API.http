@@ -1,6 +1,6 @@
 @Faturamento.API_HostAddress = http://localhost:5108
 
-GET {{Faturamento.API_HostAddress}}/weatherforecast/
+GET {{Faturamento.API_HostAddress}}/api/notas-fiscais
 Accept: application/json
 
 ###
