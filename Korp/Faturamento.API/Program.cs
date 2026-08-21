@@ -1,4 +1,11 @@
 
+using Faturamento.API.Clients;
+using Faturamento.API.Clients.Interfaces;
+using Faturamento.API.Data;
+using Faturamento.API.Services;
+using Faturamento.API.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
+
 namespace Faturamento.API {
     public class Program {
         public static void Main(string[] args) {
@@ -7,18 +14,36 @@ namespace Faturamento.API {
             // Add services to the container.
 
             builder.Services.AddControllers();
-            // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-            builder.Services.AddOpenApi();
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.EnableAnnotations();
+            });
+            builder.Services.AddDbContext<FaturamentoDbContext>(options => {
+                options.UseSqlite(builder.Configuration.GetConnectionString("Faturamento"));
+            });
+            builder.Services.AddScoped<INotaFiscalService, NotaFiscalService>();
+            builder.Services.AddHttpClient<IEstoqueClient, EstoqueClient>(client => {
+                var estoqueApi = builder.Configuration["Services:EstoqueApi"] ?? 
+                                    throw new InvalidOperationException("ConfigureServices:EstoqueApi.");
+
+                client.BaseAddress = new Uri(estoqueApi);
+
+            });
+
 
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
             if(app.Environment.IsDevelopment()) {
-                app.MapOpenApi();
+                app.UseSwagger();
+                app.UseSwaggerUI();
             }
 
-            app.UseAuthorization();
-
+            using(var scope = app.Services.CreateScope()) {
+                var db = scope.ServiceProvider.GetRequiredService<FaturamentoDbContext>();
+                db.Database.Migrate();
+            }
 
             app.MapControllers();
 
