@@ -1,0 +1,49 @@
+services:
+  estoque-api:
+    build:
+      context: .
+      dockerfile: Estoque.API/Dockerfile
+    image: korp-estoque-api
+    container_name: korp-estoque-api
+    ports:
+      - "5099:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__Estoque: Data Source=/app/data/estoque.db
+    volumes:
+      - estoque-data:/app/data
+
+  faturamento-api:
+    build:
+      context: .
+      dockerfile: Faturamento.API/Dockerfile
+    image: korp-faturamento-api
+    container_name: korp-faturamento-api
+    ports:
+      - "5108:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__Faturamento: Data Source=/app/data/faturamento.db
+      Services__EstoqueApi: http://estoque-api:8080
+    volumes:
+      - faturamento-data:/app/data
+    depends_on:
+      - estoque-api
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: korp-frontend
+    container_name: korp-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - estoque-api
+      - faturamento-api
+
+volumes:
+  estoque-data:
+  faturamento-data:
