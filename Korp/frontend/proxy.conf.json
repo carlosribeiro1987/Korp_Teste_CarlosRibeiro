@@ -1,0 +1,18 @@
+{
+  "/estoque-api": {
+    "target": "http://localhost:5099",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/estoque-api": ""
+    }
+  },
+  "/faturamento-api": {
+    "target": "http://localhost:5108",
+    "secure": false,
+    "changeOrigin": true,
+    "pathRewrite": {
+      "^/faturamento-api": ""
+    }
+  }
+}

@@ -1,0 +1,96 @@
+<section class="page">
+  <div class="toolbar">
+    <h1>Nota fiscal {{ nota?.numero }}</h1>
+    <div class="actions">
+      <a routerLink="/notas">Voltar</a>
+      <button class="secondary" type="button" (click)="carregar()" [disabled]="carregando">Atualizar</button>
+      <button class="primary" type="button" (click)="imprimir()" [disabled]="!nota || notaFechada || imprimindo">
+        {{ imprimindo ? 'Imprimindo...' : 'Imprimir' }}
+      </button>
+    </div>
+  </div>
+
+  <p class="message error" *ngIf="erro">{{ erro }}</p>
+  <p class="message success" *ngIf="sucesso">{{ sucesso }}</p>
+
+  <div class="panel" *ngIf="nota">
+    <div class="panel-header">
+      <h2>Dados da nota</h2>
+      <span class="status" [class.aberta]="nota.status === 'Aberta'" [class.fechada]="nota.status === 'Fechada'">{{ nota.status }}</span>
+    </div>
+    <div class="panel-body">
+      <table>
+        <tbody>
+          <tr>
+            <th>Numero</th>
+            <td>{{ nota.numero }}</td>
+          </tr>
+          <tr>
+            <th>Criada em</th>
+            <td>{{ nota.criadaEm | date:'short' }}</td>
+          </tr>
+          <tr>
+            <th>Fechada em</th>
+            <td>{{ nota.fechadaEm ? (nota.fechadaEm | date:'short') : '-' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel" *ngIf="nota && !notaFechada">
+    <div class="panel-header">
+      <h2>Adicionar item</h2>
+    </div>
+    <div class="panel-body">
+      <form class="form-grid" [formGroup]="form" (ngSubmit)="adicionarItem()">
+        <label>
+          Produto
+          <select formControlName="produtoId">
+            <option value="">Selecione</option>
+            <option *ngFor="let produto of produtos" [value]="produto.id">
+              {{ produto.codigo }} - {{ produto.descricao }} (saldo {{ produto.saldo }})
+            </option>
+          </select>
+        </label>
+        <label>
+          Quantidade
+          <input type="number" min="1" formControlName="quantidade">
+        </label>
+        <button class="primary" type="submit" [disabled]="salvandoItem">{{ salvandoItem ? 'Adicionando...' : 'Adicionar' }}</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="panel" *ngIf="nota">
+    <div class="panel-header">
+      <h2>Itens</h2>
+      <span>{{ nota.itens.length }} item(ns)</span>
+    </div>
+    <div class="panel-body">
+      <table *ngIf="nota.itens.length > 0">
+        <thead>
+          <tr>
+            <th>Codigo</th>
+            <th>Descricao</th>
+            <th>Quantidade</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of nota.itens">
+            <td>{{ item.codigoProduto }}</td>
+            <td>{{ item.descricaoProduto }}</td>
+            <td>{{ item.quantidade }}</td>
+            <td>
+              <button class="danger" type="button" (click)="removerItem(item)" [disabled]="notaFechada || removendoItemId === (item.itemId ?? item.id)">
+                {{ removendoItemId === (item.itemId ?? item.id) ? 'Removendo...' : 'Remover' }}
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <p *ngIf="nota.itens.length === 0">Nenhum item adicionado.</p>
+    </div>
+  </div>
+</section>

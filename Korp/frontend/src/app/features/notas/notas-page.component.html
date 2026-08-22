@@ -1,0 +1,42 @@
+<section class="page">
+  <div class="toolbar">
+    <h1>Notas fiscais</h1>
+    <div class="actions">
+      <button class="secondary" type="button" (click)="carregar()" [disabled]="carregando">Atualizar</button>
+      <button class="primary" type="button" (click)="criar()" [disabled]="criando">{{ criando ? 'Criando...' : 'Nova nota' }}</button>
+    </div>
+  </div>
+
+  <p class="message error" *ngIf="erro">{{ erro }}</p>
+
+  <div class="panel">
+    <div class="panel-header">
+      <h2>Notas cadastradas</h2>
+      <span>{{ notas.length }} registro(s)</span>
+    </div>
+    <div class="panel-body">
+      <p *ngIf="carregando">Carregando notas...</p>
+      <table *ngIf="!carregando && notas.length > 0">
+        <thead>
+          <tr>
+            <th>Numero</th>
+            <th>Status</th>
+            <th>Criada em</th>
+            <th>Itens</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let nota of notas">
+            <td>{{ nota.numero }}</td>
+            <td><span class="status" [class.aberta]="nota.status === 'Aberta'" [class.fechada]="nota.status === 'Fechada'">{{ nota.status }}</span></td>
+            <td>{{ nota.criadaEm | date:'short' }}</td>
+            <td>{{ nota.itens.length }}</td>
+            <td><a [routerLink]="['/notas', nota.id]">Abrir</a></td>
+          </tr>
+        </tbody>
+      </table>
+      <p *ngIf="!carregando && notas.length === 0">Nenhuma nota fiscal cadastrada.</p>
+    </div>
+  </div>
+</section>

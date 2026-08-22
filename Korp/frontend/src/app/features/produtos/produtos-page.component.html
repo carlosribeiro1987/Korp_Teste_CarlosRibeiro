@@ -1,0 +1,59 @@
+<section class="page">
+  <div class="toolbar">
+    <h1>Produtos</h1>
+    <button class="secondary" type="button" (click)="carregar()" [disabled]="carregando">Atualizar</button>
+  </div>
+
+  <div class="panel">
+    <div class="panel-header">
+      <h2>Novo produto</h2>
+    </div>
+    <div class="panel-body">
+      <form class="form-grid" [formGroup]="form" (ngSubmit)="salvar()">
+        <label>
+          Codigo
+          <input formControlName="codigo" autocomplete="off">
+        </label>
+        <label>
+          Descricao
+          <input formControlName="descricao" autocomplete="off">
+        </label>
+        <label>
+          Saldo
+          <input type="number" min="0" formControlName="saldo">
+        </label>
+        <button class="primary" type="submit" [disabled]="salvando">{{ salvando ? 'Salvando...' : 'Cadastrar' }}</button>
+      </form>
+    </div>
+  </div>
+
+  <p class="message error" *ngIf="erro">{{ erro }}</p>
+  <p class="message success" *ngIf="sucesso">{{ sucesso }}</p>
+
+  <div class="panel">
+    <div class="panel-header">
+      <h2>Produtos cadastrados</h2>
+      <span>{{ produtos.length }} registro(s)</span>
+    </div>
+    <div class="panel-body">
+      <p *ngIf="carregando">Carregando produtos...</p>
+      <table *ngIf="!carregando && produtos.length > 0">
+        <thead>
+          <tr>
+            <th>Codigo</th>
+            <th>Descricao</th>
+            <th>Saldo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let produto of produtos">
+            <td>{{ produto.codigo }}</td>
+            <td>{{ produto.descricao }}</td>
+            <td>{{ produto.saldo }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <p *ngIf="!carregando && produtos.length === 0">Nenhum produto cadastrado.</p>
+    </div>
+  </div>
+</section>
