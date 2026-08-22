@@ -6,5 +6,6 @@ namespace Estoque.API.Services.Interfaces {
         Task<ProdutoResponseDto?> ObterPorIdAsync(Guid id, CancellationToken cancellationToken);
         Task<ProdutoResponseDto> CriarAsync(CriarProdutoRequestDto request, CancellationToken cancellationToken);
         Task<ProdutoResponseDto> ReduzirSaldoAsync(Guid id, int quantidade, CancellationToken cancellationToken);
+        Task<ProdutoResponseDto> AumentarSaldoAsync(Guid id, int quantidade, CancellationToken cancellationToken);
     }
 }

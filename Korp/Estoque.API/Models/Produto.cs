@@ -41,5 +41,14 @@
             Saldo -= quantidade;
             ModificadoEm = DateTime.UtcNow;
         }
+
+        public void AumentarSaldo(int quantidade) {
+            if(quantidade <= 0) {
+                throw new InvalidOperationException("Quantidade deve ser maior que zero.");
+            }
+            
+            Saldo += quantidade;
+            ModificadoEm = DateTime.UtcNow;
+        }
     }
 }

@@ -1,6 +1,6 @@
 @Estoque.API_HostAddress = http://localhost:5099
 
-GET {{Estoque.API_HostAddress}}/weatherforecast/
+GET {{Estoque.API_HostAddress}}/api/produtos 
 Accept: application/json
 
 ###

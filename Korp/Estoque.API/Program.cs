@@ -14,7 +14,10 @@ namespace Estoque.API {
             // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
             //builder.Services.AddOpenApi();
 
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.EnableAnnotations();
+            });
             builder.Services.AddDbContext<EstoqueDbContext>(options => {
                 options.UseSqlite(builder.Configuration.GetConnectionString("Estoque"));
             });
@@ -31,7 +34,10 @@ namespace Estoque.API {
                 app.UseSwaggerUI();
             }
 
-            app.UseAuthorization();
+            using(var scope = app.Services.CreateScope()) {
+                var db = scope.ServiceProvider.GetRequiredService<EstoqueDbContext>();
+                db.Database.Migrate();
+            }
 
 
             app.MapControllers();

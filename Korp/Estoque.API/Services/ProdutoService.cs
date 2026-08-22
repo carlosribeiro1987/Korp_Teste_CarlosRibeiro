@@ -13,6 +13,8 @@ namespace Estoque.API.Services {
             _dbContext = dbContext;
         }
 
+        
+
         public async Task<ProdutoResponseDto> CriarAsync(CriarProdutoRequestDto request, CancellationToken cancellationToken) {
             var codigoExiste = await _dbContext.Produtos.AnyAsync(p => p.Codigo == request.Codigo, cancellationToken);
             if(codigoExiste) {
@@ -47,5 +49,16 @@ namespace Estoque.API.Services {
             await _dbContext.SaveChangesAsync(cancellationToken);
             return ProdutoResponseDto.FromModel(produto);
         }
+
+        public async Task<ProdutoResponseDto> AumentarSaldoAsync(Guid id, int quantidade, CancellationToken cancellationToken) {
+            var produto = await _dbContext.Produtos.FirstOrDefaultAsync(p => p.Id == id, cancellationToken);
+            if(produto is null) {
+                throw new KeyNotFoundException("Produto não encontrado.");
+            }
+            produto.AumentarSaldo(quantidade);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+            return ProdutoResponseDto.FromModel(produto);
+        }
     }
+    
 }

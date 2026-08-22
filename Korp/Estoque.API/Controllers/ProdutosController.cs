@@ -3,6 +3,7 @@ using Estoque.API.Exceptions;
 using Estoque.API.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace Estoque.API.Controllers {
     [Route("api/produtos")]
@@ -15,18 +16,21 @@ namespace Estoque.API.Controllers {
         }
 
         [HttpGet]
+        [SwaggerOperation(Summary = "Listar Produtos")]
         public async Task<ActionResult<IReadOnlyList<ProdutoResponseDto>>> ListarProdutos(CancellationToken cancellationToken) {
             var result = await _service.ListarAsync(cancellationToken);
             return Ok(result);
         }
 
         [HttpGet("{id:guid}")]
+        [SwaggerOperation(Summary = "Obter Produto por ID")]
         public async Task<ActionResult<ProdutoResponseDto>> ObterProduto(Guid id, CancellationToken cancellationToken) {
             var produto = await _service.ObterPorIdAsync(id, cancellationToken);
             return produto is null ? NotFound() : Ok(produto);
         }
 
         [HttpPost]
+        [SwaggerOperation(Summary = "Criar Produto")]
         public async Task<ActionResult<ProdutoResponseDto>> CriarProduto(CriarProdutoRequestDto request, CancellationToken cancellationToken) {
             try {
                 var produto = await _service.CriarAsync(request, cancellationToken);
@@ -41,6 +45,7 @@ namespace Estoque.API.Controllers {
         }
 
         [HttpPost("{id:guid}/reduzir-saldo")]
+        [SwaggerOperation(Summary = "Reduzir Saldo de um Produto")]
         public async Task<ActionResult<ProdutoResponseDto>> ReduzirSaldo(Guid id, ReduzirSaldoRequestDto request, CancellationToken cancellationToken) {
             try {
                 var produto = await _service.ReduzirSaldoAsync(id, request.Quantidade, cancellationToken);
@@ -56,6 +61,25 @@ namespace Estoque.API.Controllers {
                 return BadRequest(new { mensagem = ex.Message });
             }
         }
+
+        [HttpPost("{id:guid}/aumentar-saldo")]
+        [SwaggerOperation(Summary = "Aumentar Saldo de um Produto")]
+        public async Task<ActionResult<ProdutoResponseDto>> AumentarSaldo(Guid id, ReduzirSaldoRequestDto request, CancellationToken cancellationToken) {
+            try {
+                var produto = await _service.AumentarSaldoAsync(id, request.Quantidade, cancellationToken);
+                return Ok(produto);
+            }
+            catch(EstoqueIndisponivelException ex) {
+                return StatusCode(StatusCodes.Status503ServiceUnavailable, new { mensagem = ex.Message });
+            }
+            catch(KeyNotFoundException ex) {
+                return NotFound(new { mensagem = ex.Message });
+            }
+            catch(InvalidOperationException ex) {
+                return BadRequest(new { mensagem = ex.Message });
+            }
+        }
+
 
     }
 }
